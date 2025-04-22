@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<!--  include -->
+{{>layouts/header}}
+		
+		<h1>멤버 목록</h1>
+		<div>
+			{{loginMember.memberId}}님 반갑습니다.
+			<a href="/member/logout">로그아웃</a>
+			<a href="/member/modifyMemberPw">비밀번호 수정</a>
+			<a href="/member/removeMember">회원탈퇴</a>
+		</div>
+	
+	<!--  pw를 제외한 멤버 목록 출력 -->
+	
+	<!-- include -->
+{{>layouts/footer}}
+</body>
+</html>

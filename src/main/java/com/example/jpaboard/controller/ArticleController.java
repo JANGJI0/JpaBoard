@@ -1,5 +1,7 @@
 package com.example.jpaboard.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +25,15 @@ import lombok.extern.slf4j.Slf4j;
 public class ArticleController {
 	@Autowired // 의존성주입
 	private ArticleRepository articleRepository; // new 할 수 없으니
+	
+	// sqlTest
+	@GetMapping("/articles/sqlTest")
+	public String sqlTest(Model model) {
+		Map<String, Object> map = articleRepository.getMinMaxCount("a%");
+		log.debug(map.toString());
+		model.addAttribute("map", map);
+		return "articles/sqlTest";
+	}
 	
 	// 삭제
 	@GetMapping("/articles/delete")
@@ -83,7 +94,7 @@ public class ArticleController {
 		// list.size() : 10개
 		log.debug("list.getTotalElements(): " + list.getTotalElements()); // 전체 행의 사이즈 
 		log.debug("list.getTotalPages(): " + list.getTotalPages()); // 전체 페이지 사이즈 lastPage
-		log.debug("list.getNember(): " + list.getNumber()); // 현재 페이지 사이즈
+		log.debug("list.getNumber(): " + list.getNumber()); // 현재 페이지 사이즈
 		log.debug("list.getSize(): " + list.getSize()); // rowPerPage
 		log.debug("list.isFirst(): " + list.isFirst()); // 1페이지인지 : 이전링크유무
 		log.debug("list.hasNext(): " + list.hasNext()); // 다음이 있는지 : 다음링크유무

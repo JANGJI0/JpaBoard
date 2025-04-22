@@ -9,9 +9,11 @@
 </head>
 <body>
 {{>layouts/header}}
-
+<!-- ✅ 중앙 정렬 + 너비 제한 -->
+<div class="container mt-5 d-flex justify-content-center">
+  <div class="p-4 rounded-3 shadow bg-white w-100" style="max-width: 720px;">
 	{{#msg}}
-		<div>
+		<div class="alert alert-warning text-center">
 			{{msg}}
 		</div>
 	{{/msg}}
@@ -34,11 +36,13 @@
     {{/board}}
     </tbody>
 </table>
-
-<a href="/board/edit?no={{board.no}}" class="btn btn-primary">수정</a>
-<a href="/board/delete?no={{board.no}}" class="btn btn-danger">삭제</a>
-<a href="/board">Go to Article List</a>
-
+		<div class="text-center mt-4">
+		<a href="/board/modify?no={{board.no}}" class="btn btn-primary me-2">✏️ 수정</a>
+		<a href="/board/boardList" class="btn btn-secondary">📚 목록</a>
+		 <a href="/board/delete?no={{board.no}}" class="btn btn-danger me-2">🧽 삭제</a>
+		</div>
+	</div>
+</div>
 {{>layouts/footer}}
 </body>
 </html>

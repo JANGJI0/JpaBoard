@@ -9,12 +9,21 @@
 <body>
 	<!-- hearder.mustache include -->
 	{{>layouts/header}}
-	{{loginName}}님 반갑습니다.
 	<div>
-		<a href="/articles/index">리스트</a>
-		<a href="/board/boardList">board리스트</a>
+		<a href="/articles/index">Aticle리스트</a>
 	</div>
 	
+	<div>
+		<a href="/board/boardList">Board리스트</a>
+	</div>
+	
+	<div>
+		<a href="/member/joinMember">회원가입</a>
+	</div>
+
+	<div>
+		<a href="/member/login">로그인</a>
+	</div>
 	<!-- footer.mustache include -->
 	{{>layouts/footer}}
 </body>

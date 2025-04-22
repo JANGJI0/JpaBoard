@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<!--  include -->
+{{>layouts/header}}
+	<h1>로그인</h1>
+	
+	{{#msg}}
+		<div>{{msg}}</div>
+	{{/msg}}
+	
+	<form method="post" action="/member/login">
+		<div>
+			memberId : <input type = "text" name="memberId">
+		</div>
+
+		<div>
+			memberPw : <input type = "text" name="memberPw">
+		</div>
+		<button>로그인</button>
+	</form>
+	<!-- include -->
+{{>layouts/footer}}
+</body>
+</html>
