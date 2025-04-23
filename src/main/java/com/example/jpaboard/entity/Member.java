@@ -23,4 +23,6 @@ public class Member {
 	private String memberId;
 	@Column(name = "memberPw")
 	private String memberPw;
+	@Column(name = "memberRole")
+	private String memberRole;
 }

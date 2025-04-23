@@ -32,7 +32,7 @@ public class BoardController {
 	@GetMapping("/board/boardList")
 	public String boardList(Model model // 실제는 currentPage : number / reowPerPage : size 로 한다
 								// 현재 페이지 번호 (페이지 이동 시 사용)
-								// "currentPage 값을 받아오고 없어면 기본값은 0
+								// "currentPage 값을 받아오고 없으면 기본값은 0
 							, @RequestParam(value = "currentPage", defaultValue = "0") int currentPage // value 는 생략해도 된다.
 								// 한 페이지에 보여줄 게시글 수
 								// "rowPerPage" 값을 받아오고, 없으면 기본값은 0
@@ -55,13 +55,14 @@ public class BoardController {
 		// 4. 로그로 페이징 정보 확인
 		log.debug("list.getToalElements(): " + list.getTotalElements()); // 전체 행의 사이즈
 		log.debug("list.getTotalPages(): " + list.getTotalPages()); // 전체 페이지 사이즈 lastPage
-		log.debug("list.getNumer(): " + list.getNumber()); //현재 페이지 사이즈
+		log.debug("list.getNumber(): " + list.getNumber()); //현재 페이지 사이즈
 		log.debug("list.getSize(): " + list.getSize()); //rowPerPage
 		log.debug("list.isFirst(): " + list.isFirst()); // 1페이지인지 : 이전링크유무
-		log.debug("list.hasNext(): " + list.hasNext()); //다음이 있는지 : 다음리크유무
+		log.debug("list.hasNext(): " + list.hasNext()); //다음이 있는지 : 다음링크유무
 		
 		// 5. view에 전달할 데이터 추가
 		model.addAttribute("list", list);
+		model.addAttribute("currentPage", list.getNumber() + 1);
 		model.addAttribute("prePage", list.getNumber() - 1);
 		model.addAttribute("nextPage", list.getNumber() + 1);
 		model.addAttribute("lastPage", list.getTotalPages() - 1); // 마지막으로가는페이지

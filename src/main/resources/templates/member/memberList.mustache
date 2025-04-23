@@ -5,10 +5,26 @@
 <title>Insert title here</title>
 </head>
 <body>
-<!--  include -->
-{{>layouts/header}}
 		
 		<h1>멤버 목록</h1>
+		<table class="table table-hover text-white">
+			<thead>
+			<tr>
+				<th scope="col" class="bg-secondary text-center">번호</th>
+				<th scope="col" class="bg-secondary text-center">아이디</th>
+				<th scope="col" class="bg-secondary text-center">역할</th>
+			</tr>
+			</thead>
+			<tbody>
+				{{#list}}
+					<tr>
+						<td>{{memberNo}}</td>
+						<td>{{memberId}}</td>
+						<td>{{memberRole}}</td>
+					</tr>
+				{{/list}}
+			</tbody>
+		</table>
 		<div>
 			{{loginMember.memberId}}님 반갑습니다.
 			<a href="/member/logout">로그아웃</a>

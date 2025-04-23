@@ -5,24 +5,53 @@
 <title>Insert title here</title>
 <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+   
+    /* 전체 원형 메뉴 감싸는 컨테이너 */
+    .circle-menu {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 80px auto;
+      border-radius: 50%;
+    }
+
+    /* 각 메뉴 버튼 스타일 */
+    .circle-menu a {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #ffc107; /* 노란색 */
+      color: white;
+      text-align: center;
+      line-height: 100px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    /* 마우스 오버 시 색상 진하게 */
+    .circle-menu a:hover {
+      background-color: #ff9800;
+    }
+
+    /* 각 메뉴의 위치를 회전시켜 배치 (수동 위치 지정) */
+    .menu1 { top: 0px; left: 100px; } /*위*/
+    .menu2 { top: 200px; left: 100px; } /* 아래*/
+    .menu3 { top: 100px; left: 0px; } /* 왼쪽*/
+    .menu4 { top: 100px; left: 200px; } /* 오른쪽*/
+
+  </style>
 </head>
-<body>
+<body class="bg-dark text-white">
 	<!-- hearder.mustache include -->
 	{{>layouts/header}}
-	<div>
-		<a href="/articles/index">Aticle리스트</a>
-	</div>
-	
-	<div>
-		<a href="/board/boardList">Board리스트</a>
-	</div>
-	
-	<div>
-		<a href="/member/joinMember">회원가입</a>
-	</div>
-
-	<div>
-		<a href="/member/login">로그인</a>
+	<div class="circle-menu">
+		<a href="/member/login" class="menu1">로그인</a>
+		<a href="/member/joinMember" class="menu2">회원가입</a>
+		<a href="/board/boardList" class="menu3">Board</a>
+		<a href="/articles/index" class="menu4">Aticles</a>
 	</div>
 	<!-- footer.mustache include -->
 	{{>layouts/footer}}

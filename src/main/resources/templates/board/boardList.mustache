@@ -92,7 +92,7 @@ body {
     <a href="/board/boardList?currentPage={{prePage}}&word={{word}}" class="btn btn-outline-light btn-sm">이전</a>
     {{/list.isFirst}}
 
-    <span class="text-white fw-bold text-center" style="min-width: 40px;">{{list.getNumber}}</span>
+    <span class="text-white fw-bold text-center" style="min-width: 40px;">{{currentPage}}</span>
 
     {{#list.hasNext}}
     <a href="/board/boardList?currentPage={{nextPage}}&word={{word}}" class="btn btn-outline-light btn-sm">다음</a>

@@ -4,9 +4,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.jpaboard.dto.MemberForm;
@@ -96,7 +101,7 @@ public class MemberController {
 				return "redirect:/member/login";
 			}
 			
-			// 로그인 성공 코드 구형
+			// 로그인 성공 코드 구현
 			session.setAttribute("loginMember", loginMember); // ISSUE : pw정보까지 세션에 저장 나중에는 이렇게 하면 안된다.
 			return "redirect:/member/memberList";
 		}
@@ -109,21 +114,54 @@ public class MemberController {
 		}
 		
 		// 회원목록
-		@GetMapping("/member/memberList")
-		public String memberList(HttpSession session) {
+		@GetMapping("/member/memberList") // 페이징, id검색 추가
+		public String memberList(HttpSession session, Model model // 실무에서는 currentPage : number / rowPerPage : size로 함
+									, @RequestParam(value = "currentPage", defaultValue = "0") int currentPage // value 생략가능
+									, @RequestParam(value = "rowPerPage", defaultValue = "10") int rowPerPage
+									, @RequestParam(value = "word", defaultValue = "") String word) {
 			// session 인증 /인가 검사
 			if(session.getAttribute("loginMember") == null) {
 					return "redirect:/member/login";
 			}
+			// 1. 정렬 기준 설정 (memberId 오름차순)
+			Sort sort = Sort.by("memberId").ascending();
 			
+			// 2. pageable 생성(페이지 번호, 페이지당 글 수, 정렬)
+			PageRequest Pageable = PageRequest.of(currentPage, rowPerPage, sort); // 0페이지, 10개
 			
-			//사용자 목록 + 페이징 + id 검색
-			// Page<Member> = memberRepository.findByMemberIdContaining(Pageable pageable, String word);
-			return " member/memberList";
+			// 3. 검색어 기준으로 페이징 된 id 가져오기
+			Page<Member> list = memberRepository.findByMemberIdContaining(Pageable, word);
+			
+			// 4. 로그로 페이징 정보 확인
+			log.debug("list.getToalElements(): " + list.getTotalElements()); //전체 행의 사이즈
+			log.debug("list.getTotalPages(): " + list.getTotalPages()); // 전체 페이지 사이즈 lastPage
+			log.debug("list.getNumber(): " + list.getNumber()); // 현재 페이지 사이즈
+			log.debug("list.getSize(): " + list.getSize()); // rowPerPage
+			log.debug("list.isFirst(): " + list.isFirst()); // 1페이지인지 : 이전 링크유무
+			log.debug("list.hasNext(): " + list.hasNext()); // 다음이 있는지 : 다음링크유무
+			
+			// 5. view에 전달할 데이터 추가
+			model.addAttribute("list", list);
+			model.addAttribute("currentPage", list.getNumber() + 1); // 시작 페이지 무조건 0값을 가져와서 +1 해야 1페이지부터 시작
+			model.addAttribute("prePage", list.getNumber() - 1);
+			model.addAttribute("nextPage", list.getNumber() + 1);
+			model.addAttribute("lastPage", list.getTotalPages() - 1); // 마지막으로 가는 페이지
+			model.addAttribute("word", word); // 페이징 할 때 검색어 유지
+			
+			return "member/memberList";
 		}
 	
 	
-	// 회원정보수정
+	// 회원정보수정 비밀번호 수정
+		@PostMapping("/member/updatePw")
+		public String updatePassword(
+							  @RequestParam("memberId") String memberId
+							, @RequestParam("currentPw") String currentPw
+							, @RequestParam("newPw") String newPw
+							, @RequestParam("checkPw") String checkPw, RedirectAttributes rda)) {
+			
+		}
+						
 	
 	
 	
