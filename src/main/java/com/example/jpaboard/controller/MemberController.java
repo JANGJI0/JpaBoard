@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -75,7 +76,7 @@ public class MemberController {
 		Member member = memberForm.toEntity();
 		memberRepository.save(member); // 최종 커밋시
 		
-		return "redirect:/member/login";
+		return "redirect:/";
 		
 		}
 		
@@ -103,7 +104,7 @@ public class MemberController {
 			
 			// 로그인 성공 코드 구현
 			session.setAttribute("loginMember", loginMember); // ISSUE : pw정보까지 세션에 저장 나중에는 이렇게 하면 안된다.
-			return "redirect:/member/memberList";
+			return "redirect:/member/myPage";
 		}
 		
 		// 로그아웃
@@ -117,7 +118,7 @@ public class MemberController {
 		@GetMapping("/member/memberList") // 페이징, id검색 추가
 		public String memberList(HttpSession session, Model model // 실무에서는 currentPage : number / rowPerPage : size로 함
 									, @RequestParam(value = "currentPage", defaultValue = "0") int currentPage // value 생략가능
-									, @RequestParam(value = "rowPerPage", defaultValue = "10") int rowPerPage
+									, @RequestParam(value = "rowPerPage", defaultValue = "3") int rowPerPage
 									, @RequestParam(value = "word", defaultValue = "") String word) {
 			// session 인증 /인가 검사
 			if(session.getAttribute("loginMember") == null) {
@@ -152,20 +153,111 @@ public class MemberController {
 		}
 	
 	
-	// 회원정보수정 비밀번호 수정
-		@PostMapping("/member/updatePw")
-		public String updatePassword(
-							  @RequestParam("memberId") String memberId
-							, @RequestParam("currentPw") String currentPw
-							, @RequestParam("newPw") String newPw
-							, @RequestParam("checkPw") String checkPw, RedirectAttributes rda)) {
+		// 회원정보수정 폼, 로그인 안되었을 경우 로그인화면으로
+		@GetMapping("/member/modifyMemberPw")
+		public String modifyMemberModifyPw(HttpSession session) {
+			if(session.getAttribute("loginMember") == null) {
+				return "redirect:/member/login"; // 로그인 안되어 있으면 로그인 페이지로 리다이렉트
+			}
+			
+			return "member/modifyMemberPw"; // 로그인이 되어있으면 비밀번호 변경폼 페이지로 이동
+		}
+		
+		
+		
+		// 회원정보수정 액션 비밀번호 수정
+		@PostMapping("/member/modifyMemberPw")
+		public String modifyMemberPw(@ModelAttribute MemberForm memberForm, RedirectAttributes rda) { // RequestParam은 하나씩 받는거라 ModelAttribute 묶어서 받고 싶을 때 사용
+			
+			// 1. 아이디로 회원 조회(폼에서 이미 id도 같이 들어왔을 경우)
+			Member member = memberRepository.findByMemberId(memberForm.getMemberId());
+			
+			if(member == null) {
+				rda.addAttribute("errorMsg", "존재하지 않는 회원입니다.");
+				return "redirect:/member/modifyMemberPw"; // 회원이 없으면 오류 메세지 출력, 수정페이지로 다시 보냄
+			}
+			
+			// 2. 현재 비밀번호가 맞는지 확인
+			// 사용자가 입력한 현재 비밀번호를 인코딩
+			String inputCurrentPw = SHA256Util.encoding(memberForm.getCurrentPw());
+			
+			// DB에 저장된 인코딩된 비밀번호과 비교
+			if(!member.getMemberPw().equals(inputCurrentPw)) {
+				rda.addFlashAttribute("errorMsg", "현재 비밀번호가 일치하지 않습니다.");
+					return "redirect:/member/modifyMemberPw";
+			}
+			
+			// 3. 새 비밀번호와 확인 비밀번호가 같은지 확인
+			if(!memberForm.getNewPw().equals(memberForm.getCheckPw())) {
+				rda.addFlashAttribute("errorMsg", "새 비밀번호와 확인 비밀번호가 일치하지 않습니다.");
+					return "redirect:/member/modifyMemberPw";
+			}
+			
+			// 4. 새 비밀번호 인코딩 후 저장
+			String encodedNewPw = SHA256Util.encoding(memberForm.getNewPw()); // 보이지 않게 인코딩
+			member.setMemberPw(encodedNewPw);	// 회원 새 값 설정
+			memberRepository.save(member);		// DB에 저장(업데이트)
+			
+			// 5. 성공 메세지 전달 후 마이페이지로 이동
+			rda.addFlashAttribute("successMsg", "비밀번호가 성공적으로 변경되었습니다.");
+			return "redirect:/member/myPage"; 
 			
 		}
-						
+			
+		// 회원탈퇴 폼
+		@GetMapping("/member/removeMember") // 탈퇴 폼 페이지
+		public String removeMember(HttpSession session) {
+			// 로그인 안 되어 있으면 로그인 페이지로 보냄
+			if(session.getAttribute("loginMember") == null) {
+				return "redirect:/member/login";
+			}
+			
+			return "member/removeMember"; // 탈퇴 확인 폼페이지
+		}
 	
+		// 회원탈퇴 액션
+		@PostMapping("/member/removeMember")
+		public String removeMember(@RequestParam String memberPw // 사용자가 입력한 비밀번호
+									, HttpSession session, RedirectAttributes rda) {
+			// 로그인된 회원정보 가져오기
+			Member loginMember = (Member) session.getAttribute("loginMember");
+			
+			if(loginMember == null) {
+				return "redirect:/member/login"; // 로그인 안되어 있으면 리다이렉트 // 폼에서 체크를 했지만 안전장치로 다시한번 체크
+			}
+			
+			// 1. 입력한 비밀번호 인코딩해서 비교
+			String encodePw = SHA256Util.encoding(memberPw);
+			
+			if(!encodePw.equals(loginMember.getMemberPw())) {
+				rda.addFlashAttribute("errorMsg", "비밀번호가 일치하지 않습니다.");
+					return "redirect:/member/removeMember"; // 비밀번호가 틀릴 경우 다시 폼으로
+			}
+			
+			// 2. 회원 삭제
+			memberRepository.delete(loginMember); // 회원삭제
+			
+			// 3. 세션종료 (로그아웃 처리)
+			session.invalidate();
+			
+			rda.addFlashAttribute("successMsg", "회원탈되가 완료되었습니다.");
+			return "redirect:/"; // 메인 페이지로 이동
+			
+		}
 	
+		//마이페이지
+		@GetMapping("/member/myPage")
+		public String myPage(HttpSession session, Model model) {
+		    Member loginMember = (Member) session.getAttribute("loginMember");
+
+		    if (loginMember == null) {
+		        return "redirect:/member/login";
+		    }
+
+		    model.addAttribute("member", loginMember);
+		    return "member/myPage";
+		}
 	
-	// 회원탈퇴
 }
 
 

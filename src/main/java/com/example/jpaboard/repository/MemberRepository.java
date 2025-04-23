@@ -19,4 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Integer>{
 	// findAll() : 원하는 컬럼만 가지고 오도록
 		Page<Member> findByMemberIdContaining(Pageable pageable, String word);
 		
+		// 비밀번호 수정
+		Member findByMemberId(String memberId); // @Query 안쓰는 이유: 아직 단순한 쿼리여서
+		
 }
