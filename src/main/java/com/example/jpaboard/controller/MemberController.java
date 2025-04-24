@@ -111,7 +111,7 @@ public class MemberController {
 		@GetMapping("/member/logout")
 		public String logout(HttpSession session) {
 			session.invalidate();
-			return "redirect:/member/login";
+			return "redirect:/";
 		}
 		
 		// 회원목록
@@ -124,8 +124,8 @@ public class MemberController {
 			if(session.getAttribute("loginMember") == null) {
 					return "redirect:/member/login";
 			}
-			// 1. 정렬 기준 설정 (memberId 오름차순)
-			Sort sort = Sort.by("memberId").ascending();
+			// 1. 정렬 기준 설정 (memberId 내림차순)
+			Sort sort = Sort.by("memberNo").descending();
 			
 			// 2. pageable 생성(페이지 번호, 페이지당 글 수, 정렬)
 			PageRequest Pageable = PageRequest.of(currentPage, rowPerPage, sort); // 0페이지, 10개
@@ -143,6 +143,7 @@ public class MemberController {
 			
 			// 5. view에 전달할 데이터 추가
 			model.addAttribute("list", list);
+			model.addAttribute("TotalPage", list.getTotalPages()); // 전체 페이지
 			model.addAttribute("currentPage", list.getNumber() + 1); // 시작 페이지 무조건 0값을 가져와서 +1 해야 1페이지부터 시작
 			model.addAttribute("prePage", list.getNumber() - 1);
 			model.addAttribute("nextPage", list.getNumber() + 1);

@@ -14,7 +14,7 @@
       <div>
         <span>{{loginMember.memberId}}님 환영합니다!</span>
         <a href="/" class="btn btn-outline-light btn-sm ms-2">로그아웃</a>
-        <a href="/member/modifyMemberPw" class="btn btn-outline-warning btn-sm ms-2">비밀번호 수정</a>
+        <a href="/member/myPage" class="btn btn-outline-warning btn-sm ms-2">🏠</a>
         <a href="/member/removeMember" class="btn btn-outline-danger btn-sm ms-2">회원 탈퇴</a>
       </div>
     </div>
@@ -35,19 +35,26 @@
 
     <!-- 페이징 -->
     <div class="text-center mt-4">
+    <!-- 처음으로 -->
+	  {{^list.isFirst}}
+	  <a href="?currentPage=0&word={{word}}" class="btn btn-outline-secondary me-2">⏮</a>
+	  {{/list.isFirst}}
       {{^list.first}}
         <a href="?currentPage={{prePage}}&rowPerPage=3&word={{word}}" class="btn btn-outline-secondary me-2">이전</a>
       {{/list.first}}
 
-      <span>{{currentPage}} / {{lastPage}}</span>
+      <span>{{currentPage}} / {{TotalPage}}</span>
 
       {{#list.hasNext}}
         <a href="?currentPage={{nextPage}}&rowPerPage=3&word={{word}}" class="btn btn-outline-secondary ms-2">다음</a>
       {{/list.hasNext}}
+      
+      <!-- 마지막으로 -->
+	  {{#list.hasNext}}
+	  <a href="?currentPage={{lastPage}}&word={{word}}" class="btn btn-outline-secondary ms-2">⏭</a>
+	  {{/list.hasNext}}
     </div>
 
   </div>
-
-  {{>layouts/footer}}
 </body>
 </html>

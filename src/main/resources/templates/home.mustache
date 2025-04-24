@@ -19,25 +19,43 @@
     /* 각 메뉴 버튼 스타일 */
 	.circle-menu a {
 	  position: absolute;
-	  width: 100px;
-	  height: 100px;
+	  width: 120px;
+	  height: 120px;
 	  border-radius: 50%;
-	  background: rgba(30, 144, 255, 0.2); /* 진한 파랑 + 투명도 */
+	  background: rgba(255, 255, 255, 0.1);
+	  backdrop-filter: blur(8px);
+	  border: 2px solid #00f7ff;
 	  color: white;
-	  text-align: center;
-	  line-height: 100px;
 	  text-decoration: none;
 	  font-weight: bold;
-	  backdrop-filter: blur(10px);
-	  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-	  border: 5px solid #ff9800; /* 주황색 테두리 */
-	  transition: all 0.3s ease;
+	  font-size: 1rem;
+	  transition: transform 0.3s, box-shadow 0.3s;
+	  box-shadow: 0 0 10px #00f7ff, 0 0 40px #00f7ff inset;
+	
+	  display: flex;
+	  flex-direction: column;
+	  align-items: center;
+	  justify-content: center; /* 세로 가운데 정렬 핵심 */
+	  padding: 0; /* 여백 제거 */
+	  overflow: hidden; /* 혹시 넘치는 요소 잘라내기 */
+	}
+	
+	.emoji {
+	  font-size: 1.7rem;
+	  margin-bottom: 4px;
+	  line-height: 1; /* 줄 간격 줄이기 */
+	}
+	
+	.label {
+	  font-size: 0.8rem;
+	  line-height: 1;
+	  margin: 0; /* 여백 제거 */
 	}
 
     /* 마우스 오버 시 색상 진하게 */
     .circle-menu a:hover {
-	  background: rgba(255, 152, 0, 0.4); /* 오버 시 더 진하게 */
-	  transform: scale(1.05);
+	 transform: scale(1.08);
+	  box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
 	}
 
     /* 각 메뉴의 위치를 회전시켜 배치 (수동 위치 지정) */
@@ -49,15 +67,23 @@
   </style>
 </head>
 <body class="bg-dark text-white">
-	<!-- hearder.mustache include -->
-	{{>layouts/header}}
 	<div class="circle-menu">
-		<a href="/member/login" class="menu1">로그인</a>
-		<a href="/member/joinMember" class="menu2">회원가입</a>
-		<a href="/board/boardList" class="menu3">Board</a>
-		<a href="/articles/index" class="menu4">Aticles</a>
+		<a href="/member/login" class="menu1">
+			 <div class="emoji">🔐</div>
+	 		 <div class="label">로그인</div>
+		</a>
+		<a href="/member/joinMember" class="menu2">
+			 <div class="emoji">📝</div>
+	 		 <div class="label">회원가입</div>
+		</a>
+		<a href="/board/boardList" class="menu3">
+			 <div class="emoji">🧑‍🏫</div>
+			 <div class="label">Board</div>
+		</a>
+		<a href="/articles/index" class="menu4">
+			<div class="emoji">🧾</div>
+			<div class="label">Aticles</div>
+		</a>
 	</div>
-	<!-- footer.mustache include -->
-	{{>layouts/footer}}
 </body>
 </html>

@@ -17,6 +17,7 @@ import com.example.jpaboard.dto.BoardForm;
 import com.example.jpaboard.entity.Board;
 import com.example.jpaboard.repository.BoardRepository;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,13 +25,20 @@ import lombok.extern.slf4j.Slf4j;
 public class BoardController {
 	@Autowired // 의존성주입
 	private BoardRepository boardRepository; // new 할 수 없으니
-
+	
+	
+	 // 로그아웃
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); //모든 세션 삭제
+        return "redirect:/";
+    }
 	
 	// boardList
 	// 페이징, 검색기능 추가
 	// GET 방식으로 /boards 경로에 접속했을 때 실행
 	@GetMapping("/board/boardList")
-	public String boardList(Model model // 실제는 currentPage : number / reowPerPage : size 로 한다
+	public String boardList(HttpSession session, Model model // 실제는 currentPage : number / reowPerPage : size 로 한다
 								// 현재 페이지 번호 (페이지 이동 시 사용)
 								// "currentPage 값을 받아오고 없으면 기본값은 0
 							, @RequestParam(value = "currentPage", defaultValue = "0") int currentPage // value 는 생략해도 된다.
@@ -40,6 +48,12 @@ public class BoardController {
 								// 검색어 (게시글, 제목, 내용에 포함된 단어 검색)
 								// 없으면 빈 문자열로 "" 처리
 							, @RequestParam(value = "word", defaultValue = "") String word){
+		
+		// 로그인 여부 확인
+	    if (session.getAttribute("loginMember") == null) {
+	        return "redirect:/member/login"; // 로그인 안 되어 있으면 로그인 페이지로 이동
+	    }
+	   
 		
 		// 1. 정렬 기준 설청 (title 오름차순 -> content 내림차순)
 		Sort s1 = Sort.by("title").ascending(); // title 오름차순

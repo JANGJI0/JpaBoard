@@ -18,6 +18,7 @@ import com.example.jpaboard.dto.ArticleForm;
 import com.example.jpaboard.entity.Article;
 import com.example.jpaboard.repository.ArticleRepository;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -77,10 +78,15 @@ public class ArticleController {
 
 
 	@GetMapping("/articles/index")
-	public String articleList(Model model  // 실제는 currentPage : number / rowPerPage : size 로 한다
+	public String articleList(HttpSession session, Model model  // 실제는 currentPage : number / rowPerPage : size 로 한다
 							, @RequestParam(value = "currentPage", defaultValue = "0") int currentPage // value 생략해도 된다.
 							, @RequestParam(value =  "rowPerPage", defaultValue = "10") int rowPerPage
 							, @RequestParam(value = "word", defaultValue = "") String word) {
+		
+		// 로그인 여부 확인
+	    if (session.getAttribute("loginMember") == null) {
+	        return "redirect:/member/login"; // 로그인 안 되어 있으면 로그인 페이지로 이동
+	    }
 		
 		
 		Sort s1 = Sort.by("title").ascending();
